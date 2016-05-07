@@ -108,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10150.0\ucrt;$(ProjectDir)\..\..\glfw-3.1.2.bin.WIN64\include;$(ProjectDir)\..\..\glew-1.9.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10150.0\ucrt;$(ProjectDir)\..\..\glm-0.9.7.4;$(ProjectDir)\..\..\glfw-3.1.2.bin.WIN64\include;$(ProjectDir)\..\..\glew-1.9.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10150.0\ucrt;$(ProjectDir)\..\..\glfw-3.1.2.bin.WIN64\include;$(ProjectDir)\..\..\glew-1.9.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10150.0\ucrt;$(ProjectDir)\..\..\glm-0.9.7.4;$(ProjectDir)\..\..\glfw-3.1.2.bin.WIN64\include;$(ProjectDir)\..\..\glew-1.9.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +162,9 @@
   <ItemGroup>
     <ClCompile Include="GettingStarted.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
