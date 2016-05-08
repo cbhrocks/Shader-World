@@ -10,6 +10,7 @@
 
 // GL includes
 #include "Camera.h"
+#include "Shader.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -17,7 +18,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Other Libs
-#include <SOIL.h>
+// #include <SOIL.h>
 
 // Properties
 GLuint screenWidth = 800, screenHeight = 600;
