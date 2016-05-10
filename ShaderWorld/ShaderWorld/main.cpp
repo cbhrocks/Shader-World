@@ -39,6 +39,10 @@ int main()
 {
 	// Init GLFW
 	glfwInit();
+
+	GLFWmonitor* primary = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(primary);
+	
 	// Set all the required options for GLFW
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -47,7 +51,7 @@ int main()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "LearnOpenGL", primary, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set the required callback functions
@@ -64,7 +68,7 @@ int main()
 	glewInit();
 
 	// Define the viewport dimensions
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, mode->width, mode->height);
 
 	// Setup some OpenGL options
 	glEnable(GL_DEPTH_TEST);
@@ -123,7 +127,7 @@ int main()
 		glm::mat4 view;
 		view = camera.GetViewMatrix();
 		glm::mat4 projection;
-		projection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
+		projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
 		// Get the uniform locations
 		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
