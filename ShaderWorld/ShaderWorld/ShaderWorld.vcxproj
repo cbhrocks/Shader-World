@@ -167,6 +167,8 @@
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="alternate.frag" />
+    <None Include="alternate.vs" />
     <None Include="default.frag" />
     <None Include="default.vs" />
   </ItemGroup>

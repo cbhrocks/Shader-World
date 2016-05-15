@@ -34,5 +34,11 @@
     <None Include="default.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="alternate.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="alternate.vs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

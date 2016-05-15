@@ -74,7 +74,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	// Build and compile our shader program
-	Shader ourShader("default.vs", "default.frag");
+	Shader ourShader("alternate.vs", "alternate.frag");
 
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
