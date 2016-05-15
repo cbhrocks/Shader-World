@@ -21,6 +21,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void Do_Movement();
+void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader);
 
 // Camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -73,9 +74,14 @@ int main()
 	// Setup some OpenGL options
 	glEnable(GL_DEPTH_TEST);
 
-	// Build and compile our shader program
-	Shader ourShader("alternate.vs", "alternate.frag");
+	// Build and compile our default shader program
+	Shader defaultShader("default.vs", "default.frag");
+	// Build and compile our alternate shader program
+	Shader altShader("alternate.vs", "alternate.frag");
 
+	// Set our currently used shader to the default shader
+	Shader currentShader = defaultShader;
+	
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] = {
@@ -113,6 +119,7 @@ int main()
 
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
+		Switch_Shader(&currentShader, &defaultShader, &altShader);
 		Do_Movement();
 
 		// Render
@@ -121,7 +128,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw the triangle
-		ourShader.Use();
+		currentShader.Use();
 
 		// Create camera transformation
 		glm::mat4 view;
@@ -129,9 +136,9 @@ int main()
 		glm::mat4 projection;
 		projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
 		// Get the uniform locations
-		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
-		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
-		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
+		GLint modelLoc = glGetUniformLocation(currentShader.Program, "model");
+		GLint viewLoc = glGetUniformLocation(currentShader.Program, "view");
+		GLint projLoc = glGetUniformLocation(currentShader.Program, "projection");
 		// Pass the matrices to the shader
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -154,6 +161,16 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+
+// Switch shader based on user input
+void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader)
+{
+	if (keys[GLFW_KEY_1])
+		*currentShader = *defaultShader;
+	if (keys[GLFW_KEY_2])
+		*currentShader = *altShader;
+}
+
 
 // Moves/alters the camera positions based on user input
 void Do_Movement()
