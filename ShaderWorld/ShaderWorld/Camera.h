@@ -116,6 +116,18 @@ public:
 		if (this->Zoom >= 45.0f)
 			this->Zoom = 45.0f;
 	}
+	
+	// Set the Camera's position to the new position given
+	void setPosition(glm::vec3 newPosition)
+	{
+		this->Position = newPosition;
+	}
+
+	// Getter for the Camera's position
+	glm::vec3 getPostion()
+	{
+		return this->Position;
+	}
 
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
