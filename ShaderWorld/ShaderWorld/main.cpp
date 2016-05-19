@@ -32,7 +32,7 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
 // Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+//const GLuint WIDTH = 800, HEIGHT = 600;
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -86,16 +86,28 @@ int main()
 	GLuint VBO, VAO;
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
 	glBindVertexArray(VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+
+	// Position attribute
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
+	// Color attribute
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+
+	// Unbind VAO
 	glBindVertexArray(0);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	 glm::mat4 projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
+	 ourShader.Use();
+	 GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
+	 glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -115,26 +127,21 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw the triangle
-		ourShader.Use();
 
 		// Create camera transformation
 		glm::mat4 view;
 		view = camera.GetViewMatrix();
-		glm::mat4 projection;
-		projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
 		// Get the uniform locations
-		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
-		GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
 		// Pass the matrices to the shader
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		// Calculate the model matrix for each object and pass it to shader before drawing
+		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
+		glm::mat4 model;
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindVertexArray(VAO);
-		// Calculate the model matrix for each object and pass it to shader before drawing
-		glm::mat4 model;
-		model = glm::rotate(model, -20.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_POINTS, 0, 4);
 		glBindVertexArray(0);
 
