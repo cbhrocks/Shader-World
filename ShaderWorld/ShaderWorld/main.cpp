@@ -24,7 +24,8 @@ void Do_Movement();
 void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+glm::vec3 camOrigin = glm::vec3(0.0f, 0.0f, 3.0f);
+Camera camera(camOrigin);
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -121,6 +122,26 @@ int main()
 		glfwPollEvents();
 		Switch_Shader(&currentShader, &defaultShader, &altShader);
 		Do_Movement();
+
+		// Check camera position and see if it reaches the boundary of the room 
+		// reset the camera to the other side of the room when it crosses the boundary
+		glm::vec3 camPos = camera.getPostion();
+		if (abs(camPos.x) > 5.0f)
+		{
+			camPos.x = -1 * camPos.x;
+			camera.setPosition(camPos);
+		}
+		if (abs(camPos.y) > 5.0f)
+		{
+			camPos.y = -1 * camPos.y;
+			camera.setPosition(camPos);
+		}
+		if (abs(camPos.z) > 5.0f)
+		{
+			camPos.z = -1 * camPos.z;
+			camera.setPosition(camPos);
+		}
+
 
 		// Render
 		// Clear the colorbuffer
