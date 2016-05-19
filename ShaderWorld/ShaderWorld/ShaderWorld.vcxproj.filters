@@ -40,10 +40,10 @@
     <None Include="default.gs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="defaultSkybox.frag">
+    <None Include="Skybox.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="defaultSkybox.vs">
+    <None Include="Skybox.vs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

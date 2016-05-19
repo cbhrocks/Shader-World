@@ -171,8 +171,8 @@
     <None Include="default.frag" />
     <None Include="default.gs" />
     <None Include="default.vs" />
-    <None Include="defaultSkybox.frag" />
-    <None Include="defaultSkybox.vs" />
+    <None Include="Skybox.frag" />
+    <None Include="Skybox.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
