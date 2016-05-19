@@ -21,6 +21,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void Do_Movement();
+void Input_Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader);
 void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader);
 
 // Camera
@@ -120,7 +121,7 @@ int main()
 
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
-		Switch_Shader(&currentShader, &defaultShader, &altShader);
+		Input_Switch_Shader(&currentShader, &defaultShader, &altShader);
 		Do_Movement();
 
 		// Check camera position and see if it reaches the boundary of the room 
@@ -130,16 +131,19 @@ int main()
 		{
 			camPos.x = -1 * camPos.x;
 			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &altShader);
 		}
 		if (abs(camPos.y) > 5.0f)
 		{
 			camPos.y = -1 * camPos.y;
 			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &altShader);
 		}
 		if (abs(camPos.z) > 5.0f)
 		{
 			camPos.z = -1 * camPos.z;
 			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &altShader);
 		}
 
 
@@ -184,7 +188,7 @@ int main()
 }
 
 // Switch shader based on user input
-void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader)
+void Input_Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader)
 {
 	if (keys[GLFW_KEY_1])
 		*currentShader = *defaultShader;
@@ -192,6 +196,10 @@ void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShad
 		*currentShader = *altShader;
 }
 
+void Switch_Shader(Shader* currentShader, Shader* defaultShader, Shader* altShader)
+{
+		*currentShader = *altShader;
+}
 
 // Moves/alters the camera positions based on user input
 void Do_Movement()
