@@ -163,11 +163,16 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlternateScene.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="alternate.frag" />
+    <None Include="alternate.gs" />
+    <None Include="alternate.vs" />
     <None Include="default.frag" />
     <None Include="default.gs" />
     <None Include="default.vs" />

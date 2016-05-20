@@ -29,6 +29,12 @@
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlternateScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -44,6 +50,15 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="Skybox.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="alternate.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="alternate.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="alternate.gs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

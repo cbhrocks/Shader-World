@@ -10,6 +10,7 @@
 // Other includes
 #include "Shader.h"
 #include "Camera.h"
+#include "Scene.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -20,6 +21,9 @@
 #include <SOIL.h>
 
 // Function prototypes
+void setAttributeData(int loc, int count, int size, int offset);
+void Switch_Shader(Shader** currentShader, Shader* defaultShader, Shader* nextShader);
+void Input_Switch_Shader(Shader** currentShader, Shader* defaultShader, Shader* altShader);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -36,8 +40,11 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+GLuint VBO, VAO;
+
 // Window dimensions
 //const GLuint WIDTH = 800, HEIGHT = 600;
+
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -78,79 +85,95 @@ int main()
 	// Setup some OpenGL options
 	glEnable(GL_DEPTH_TEST);
 
+	Scene scene = Scene("default");
+
 	// Build and compile our shader program
-	Shader ourShader("default.vs", "default.frag", "default.gs");
+	Shader defaultShader("default.vs", "default.frag", "default.gs");
+	Shader alternateShader("alternate.vs", "alternate.frag", "alternate.gs");
+	Shader* currentShader = &defaultShader;
 	Shader skyboxShader("skybox.vs", "skybox.frag");
 
 	#pragma region "object_initialization"
 
 	GLfloat skyboxVertices[] = {
 		// Positions          
-		-5.0f,  5.0f, -5.0f,
-		-5.0f, -5.0f, -5.0f,
-		5.0f, -5.0f, -5.0f,
-		5.0f, -5.0f, -5.0f,
-		5.0f,  5.0f, -5.0f,
-		-5.0f,  5.0f, -5.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
 
-		-5.0f, -5.0f,  5.0f,
-		-5.0f, -5.0f, -5.0f,
-		-5.0f,  5.0f, -5.0f,
-		-5.0f,  5.0f, -5.0f,
-		-5.0f,  5.0f,  5.0f,
-		-5.0f, -5.0f,  5.0f,
+		-10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
 
-		5.0f, -5.0f, -5.0f,
-		5.0f, -5.0f,  5.0f,
-		5.0f,  5.0f,  5.0f,
-		5.0f,  5.0f,  5.0f,
-		5.0f,  5.0f, -5.0f,
-		5.0f, -5.0f, -5.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
 
-		-5.0f, -5.0f,  5.0f,
-		-5.0f,  5.0f,  5.0f,
-		5.0f,  5.0f,  5.0f,
-		5.0f,  5.0f,  5.0f,
-		5.0f, -5.0f,  5.0f,
-		-5.0f, -5.0f,  5.0f,
+		-10.0f, -10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
 
-		-5.0f,  5.0f, -5.0f,
-		5.0f,  5.0f, -5.0f,
-		5.0f,  5.0f,  5.0f,
-		5.0f,  5.0f,  5.0f,
-		-5.0f,  5.0f,  5.0f,
-		-5.0f,  5.0f, -5.0f,
+		-10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f, -10.0f,
 
-		-5.0f, -5.0f, -5.0f,
-		-5.0f, -5.0f,  5.0f,
-		5.0f, -5.0f, -5.0f,
-		5.0f, -5.0f, -5.0f,
-		-5.0f, -5.0f,  5.0f,
-		5.0f, -5.0f,  5.0f
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f
 	};
 
-	// Vertex data
-	GLfloat points[] = {
-		-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
-		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
-		-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // Bottom-left
+	 //wVertex data
+	GLfloat vertices[] = {
+		//positions			//colors
+		-0.5f,  0.5f, 0.0f,	1.0f, 0.0f, 0.0f, // Top-left
+		0.5f,  0.5f, 0.0f,	0.0f, 1.0f, 0.0f, // Top-right
+		0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f, // Bottom-right
+		-0.5f, -0.5f, 0.0f,	1.0f, 1.0f, 0.0f  // Bottom-left
 	};
-	GLuint VBO, VAO;
+
+	/*GLfloat* floatVertices = scene.getVertices();
+	GLfloat vertices[sizeof(floatVertices)/sizeof(GLfloat)];
+	for (int i = 0; i < 24 ; i++) {
+		vertices[i] = floatVertices[i];
+	}*/
+	
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
 	//// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+
+	//// Position attribute
+	//setAttributeData(0, 3, 6, 0);
+	//// Color attribute
+	//setAttributeData(1, 3, 6, 3);
 
 	// Position attribute
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
+	std::vector<int> va = scene.getVecAtrib();
+	setAttributeData(va[0], va[1], va[2], va[3]);
 	// Color attribute
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+	std::vector<int> ca = scene.getColAtrib();
+	setAttributeData(ca[0], ca[1], ca[2], ca[3]);
 
 	// Unbind VAO
 	glBindVertexArray(0);
@@ -169,21 +192,18 @@ int main()
 	#pragma endregion
 
 	// Cubemap (Skybox)
-	std::vector<const GLchar*> faces;
-	faces.push_back("Resources/skybox/right.jpg");
+	std::vector<const GLchar*> faces = scene.getFaces();
+	/*faces.push_back("Resources/skybox/right.jpg");
 	faces.push_back("Resources/skybox/left.jpg");
 	faces.push_back("Resources/skybox/top.jpg");
 	faces.push_back("Resources/skybox/bottom.jpg");
 	faces.push_back("Resources/skybox/back.jpg");
-	faces.push_back("Resources/skybox/front.jpg");
+	faces.push_back("Resources/skybox/front.jpg");*/
 	GLuint cubemapTexture = loadCubemap(faces);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	glm::mat4 projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
-	ourShader.Use();
-	GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -195,7 +215,30 @@ int main()
 
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
+		Input_Switch_Shader(&currentShader, &defaultShader, &alternateShader);
 		Do_Movement();
+
+		// Check camera position and see if it reaches the boundary of the room 
+		// reset the camera to the other side of the room when it crosses the boundary
+		glm::vec3 camPos = camera.getPostion();
+		if (abs(camPos.x) > 5.0f)
+		{
+			camPos.x = -1 * camPos.x;
+			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &alternateShader);
+		}
+		if (abs(camPos.y) > 5.0f)
+		{
+			camPos.y = -1 * camPos.y;
+			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &alternateShader);
+		}
+		if (abs(camPos.z) > 5.0f)
+		{
+			camPos.z = -1 * camPos.z;
+			camera.setPosition(camPos);
+			Switch_Shader(&currentShader, &defaultShader, &alternateShader);
+		}
 
 		// Render
 		// Clear the colorbuffer
@@ -203,17 +246,22 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw the scene
-		ourShader.Use();
+		currentShader->Use();
 
 		// Create camera transformation
 		glm::mat4 view = camera.GetViewMatrix();
-		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
+		GLint viewLoc = glGetUniformLocation(currentShader->Program, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 		// Calculate the model matrix for each object and pass it to shader before drawing
 		glm::mat4 model;
-		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
+		GLint modelLoc = glGetUniformLocation(currentShader->Program, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		glm::mat4 projection = glm::perspective(camera.Zoom, (float)mode->width / (float)mode->height, 0.1f, 1000.0f);
+		//currentShader->Use();
+		GLint projLoc = glGetUniformLocation(currentShader->Program, "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_POINTS, 0, 4);
@@ -245,6 +293,11 @@ int main()
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 	return 0;
+}
+
+void setAttributeData(int loc, int count, int size, int offset) {
+	glVertexAttribPointer(loc, count, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (GLvoid*)(offset * sizeof(GLfloat)));
+	glEnableVertexAttribArray(loc);
 }
 
 // Loads a cubemap texture from 6 individual texture faces
@@ -305,7 +358,26 @@ GLuint loadTexture(GLchar* path)
 	return textureID;
 }
 
+void Switch_Shader(Shader** currentShader, Shader* defaultShader, Shader* nextShader)
+{
+	if (*currentShader == defaultShader) {
+		*currentShader = nextShader;
+	}
+	else {
+		*currentShader = defaultShader;
+	}
+}
+
 #pragma region "User input"
+
+// Switch shader based on user input
+void Input_Switch_Shader(Shader** currentShader, Shader* defaultShader, Shader* altShader)
+{
+	if (keys[GLFW_KEY_1])
+		*currentShader = defaultShader;
+	if (keys[GLFW_KEY_2])
+		*currentShader = altShader;
+}
 
 // Moves/alters the camera positions based on user input
 void Do_Movement()
@@ -319,6 +391,9 @@ void Do_Movement()
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+
+	
+
 }
 
 // Is called whenever a key is pressed/released via GLFW
